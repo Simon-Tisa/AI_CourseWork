@@ -1,0 +1,37 @@
+from __future__ import annotations
+
+import argparse
+import csv
+from pathlib import Path
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Summarize experiment metrics into a paper table.")
+    parser.add_argument("--results-dir", default="experiments/results")
+    parser.add_argument("--out", default="paper/tables/segmentation_results.csv")
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    rows: list[dict[str, str]] = []
+    for metrics_path in sorted(Path(args.results_dir).glob("*/metrics.csv")):
+        with metrics_path.open("r", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            rows.extend(reader)
+
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", newline="", encoding="utf-8") as file:
+        fieldnames = ["dataset", "model", "seed", "iou", "dice", "params"]
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({key: row[key] for key in fieldnames})
+
+    print(f"wrote_table={out} rows={len(rows)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
