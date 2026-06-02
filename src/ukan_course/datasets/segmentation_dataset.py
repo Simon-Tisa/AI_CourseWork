@@ -45,7 +45,9 @@ class SegmentationDataset(Dataset):
             image = augmented["image"]
             mask = augmented["mask"]
 
-        image = image.astype("float32") / 255.0
+        image = image.astype("float32")
+        if image.min() >= 0.0 and image.max() > 1.0:
+            image = image / 255.0
         mask = (mask.astype("float32") / 255.0 >= 0.5).astype("float32")
         image = torch.from_numpy(image.transpose(2, 0, 1))
         mask = torch.from_numpy(mask.transpose(2, 0, 1))

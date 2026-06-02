@@ -1,0 +1,19 @@
+name: busi_ukan_seed2981
+dataset: busi
+model: ukan
+data_dir: data/processed/busi
+train_split: data/splits/busi_seed2981_train.txt
+val_split: data/splits/busi_seed2981_val.txt
+mask_ext: _mask.png
+input_size: 256
+batch_size: 8
+epochs: 100
+seed: 2981
+lr: 0.0001
+kan_lr: 0.01
+weight_decay: 0.0001
+kan_weight_decay: 0.0001
+min_lr: 0.00001
+embed_dims: [128, 160, 256]
+no_kan: false
+num_workers: 0
