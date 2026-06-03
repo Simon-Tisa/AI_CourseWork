@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import time
 from pathlib import Path
 
 import albumentations as A
@@ -12,8 +13,8 @@ from PIL import Image
 from torch.utils.data import DataLoader
 
 from src.ukan_course.datasets.segmentation_dataset import SegmentationDataset
-from src.ukan_course.metrics import dice_score, iou_score
-from src.ukan_course.models import AttentionUKAN, UKAN
+from src.ukan_course.metrics import binary_stats, scores_from_stats
+from src.ukan_course.models import AttentionUKAN, UKAN, UNet
 from src.ukan_course.utils import count_parameters, ensure_dir, read_split, seed_everything
 
 
@@ -30,6 +31,12 @@ def load_config(exp_dir: Path) -> dict:
 
 
 def build_model(config: dict) -> torch.nn.Module:
+    if config["model"] == "unet":
+        return UNet(
+            num_classes=1,
+            input_channels=3,
+            base_channels=config.get("base_channels", 32),
+        )
     model_cls = AttentionUKAN if config["model"] == "attention_ukan" else UKAN
     return model_cls(
         num_classes=1,
@@ -73,18 +80,25 @@ def main() -> int:
 
     loader = build_loader(config)
     pred_dir = ensure_dir(exp_dir / "predictions")
-    total_iou = 0.0
-    total_dice = 0.0
+    total_stats = {"tp": 0, "fp": 0, "fn": 0, "tn": 0}
+    total_infer_seconds = 0.0
     total_samples = 0
 
     with torch.no_grad():
         for images, masks, meta in loader:
             images = images.to(device)
             masks = masks.to(device)
+            if device.type == "cuda":
+                torch.cuda.synchronize()
+            start_time = time.perf_counter()
             logits = model(images)
+            if device.type == "cuda":
+                torch.cuda.synchronize()
+            total_infer_seconds += time.perf_counter() - start_time
             batch_size = images.size(0)
-            total_iou += iou_score(logits, masks) * batch_size
-            total_dice += dice_score(logits, masks) * batch_size
+            batch_stats = binary_stats(logits, masks)
+            for key, value in batch_stats.items():
+                total_stats[key] += value
             total_samples += batch_size
 
             probs = torch.sigmoid(logits).cpu().numpy()
@@ -92,14 +106,19 @@ def main() -> int:
             for pred, image_id in zip(preds, meta["image_id"]):
                 Image.fromarray(pred[0], mode="L").save(pred_dir / f"{image_id}.png")
 
+    scores = scores_from_stats(total_stats)
     metrics = {
         "name": config["name"],
         "dataset": config["dataset"],
         "model": config["model"],
         "seed": config["seed"],
-        "iou": total_iou / max(total_samples, 1),
-        "dice": total_dice / max(total_samples, 1),
+        "iou": scores["iou"],
+        "dice": scores["dice"],
+        "precision": scores["precision"],
+        "recall": scores["recall"],
+        "specificity": scores["specificity"],
         "params": count_parameters(model),
+        "infer_ms_per_image": 1000.0 * total_infer_seconds / max(total_samples, 1),
     }
 
     with (exp_dir / "metrics.csv").open("w", newline="", encoding="utf-8") as file:
@@ -109,7 +128,9 @@ def main() -> int:
 
     print(
         f"name={metrics['name']} dataset={metrics['dataset']} model={metrics['model']} "
-        f"iou={metrics['iou']:.4f} dice={metrics['dice']:.4f} params={metrics['params']}"
+        f"iou={metrics['iou']:.4f} dice={metrics['dice']:.4f} "
+        f"precision={metrics['precision']:.4f} recall={metrics['recall']:.4f} "
+        f"params={metrics['params']} infer_ms={metrics['infer_ms_per_image']:.2f}"
     )
     return 0
 

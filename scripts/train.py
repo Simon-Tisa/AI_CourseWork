@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 from src.ukan_course.datasets.segmentation_dataset import SegmentationDataset
 from src.ukan_course.losses import BCEDiceLoss
 from src.ukan_course.metrics import dice_score, iou_score
-from src.ukan_course.models import AttentionUKAN, UKAN
+from src.ukan_course.models import AttentionUKAN, UKAN, UNet
 from src.ukan_course.utils import count_parameters, ensure_dir, read_split, seed_everything
 
 try:
@@ -40,6 +40,12 @@ def load_config(path: str | Path) -> dict:
 
 
 def build_model(config: dict) -> torch.nn.Module:
+    if config["model"] == "unet":
+        return UNet(
+            num_classes=1,
+            input_channels=3,
+            base_channels=config.get("base_channels", 32),
+        )
     model_cls = AttentionUKAN if config["model"] == "attention_ukan" else UKAN
     return model_cls(
         num_classes=1,

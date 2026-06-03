@@ -23,11 +23,22 @@ def main() -> int:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", newline="", encoding="utf-8") as file:
-        fieldnames = ["dataset", "model", "seed", "iou", "dice", "params"]
+        fieldnames = [
+            "dataset",
+            "model",
+            "seed",
+            "iou",
+            "dice",
+            "precision",
+            "recall",
+            "specificity",
+            "params",
+            "infer_ms_per_image",
+        ]
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         for row in rows:
-            writer.writerow({key: row[key] for key in fieldnames})
+            writer.writerow({key: row.get(key, "") for key in fieldnames})
 
     print(f"wrote_table={out} rows={len(rows)}")
     return 0
