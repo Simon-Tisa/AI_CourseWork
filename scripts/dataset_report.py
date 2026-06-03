@@ -4,9 +4,13 @@ import argparse
 import csv
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
+
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError:
+    plt = None
 
 
 def parse_args() -> argparse.Namespace:
@@ -29,6 +33,81 @@ def load_image(path: Path) -> np.ndarray:
 
 def load_mask(path: Path) -> np.ndarray:
     return np.asarray(Image.open(path).convert("L"))
+
+
+def overlay_mask(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    overlay = image.copy()
+    overlay[mask > 127] = (0.55 * overlay[mask > 127] + np.array([255, 0, 0]) * 0.45).astype(np.uint8)
+    return overlay
+
+
+def fit_tile(image: Image.Image, size: tuple[int, int]) -> Image.Image:
+    tile = Image.new("RGB", size, "white")
+    fitted = image.copy()
+    fitted.thumbnail(size, Image.Resampling.LANCZOS)
+    offset = ((size[0] - fitted.width) // 2, (size[1] - fitted.height) // 2)
+    tile.paste(fitted, offset)
+    return tile
+
+
+def save_samples_with_pillow(
+    sample_paths: list[Path],
+    mask_dir: Path,
+    mask_ext: str,
+    figure_path: Path,
+    tile_size: tuple[int, int] = (256, 256),
+) -> None:
+    labels = ("Image", "Mask", "Overlay")
+    label_height = 24
+    rows = len(sample_paths)
+    canvas = Image.new("RGB", (tile_size[0] * 3, rows * (tile_size[1] + label_height)), "white")
+    draw = ImageDraw.Draw(canvas)
+
+    for row, image_path in enumerate(sample_paths):
+        image = load_image(image_path)
+        mask = load_mask(mask_dir / f"{image_path.stem}{mask_ext}")
+        tiles = [
+            Image.fromarray(image),
+            Image.fromarray(mask).convert("RGB"),
+            Image.fromarray(overlay_mask(image, mask)),
+        ]
+        y = row * (tile_size[1] + label_height)
+        for col, label in enumerate(labels):
+            x = col * tile_size[0]
+            draw.text((x + 8, y + 4), label, fill=(30, 30, 30))
+            canvas.paste(fit_tile(tiles[col], tile_size), (x, y + label_height))
+
+    canvas.save(figure_path)
+
+
+def save_samples_with_matplotlib(
+    sample_paths: list[Path],
+    mask_dir: Path,
+    mask_ext: str,
+    figure_path: Path,
+) -> None:
+    if plt is None:
+        save_samples_with_pillow(sample_paths, mask_dir, mask_ext, figure_path)
+        return
+
+    fig, axes = plt.subplots(len(sample_paths), 3, figsize=(9, 3 * len(sample_paths)))
+    if len(sample_paths) == 1:
+        axes = np.expand_dims(axes, axis=0)
+    for row, image_path in enumerate(sample_paths):
+        image = load_image(image_path)
+        mask = load_mask(mask_dir / f"{image_path.stem}{mask_ext}")
+        axes[row, 0].imshow(image)
+        axes[row, 0].set_title("Image")
+        axes[row, 1].imshow(mask, cmap="gray")
+        axes[row, 1].set_title("Mask")
+        axes[row, 2].imshow(overlay_mask(image, mask))
+        axes[row, 2].set_title("Overlay")
+        for col in range(3):
+            axes[row, col].axis("off")
+
+    fig.tight_layout()
+    fig.savefig(figure_path, dpi=200)
+    plt.close(fig)
 
 
 def main() -> int:
@@ -81,30 +160,11 @@ def main() -> int:
             }
         )
 
-    sample_paths = image_paths[: args.max_samples]
-    fig, axes = plt.subplots(len(sample_paths), 3, figsize=(9, 3 * len(sample_paths)))
-    if len(sample_paths) == 1:
-        axes = np.expand_dims(axes, axis=0)
-    for row, image_path in enumerate(sample_paths):
-        image = load_image(image_path)
-        mask = load_mask(mask_dir / f"{image_path.stem}{ext}")
-        overlay = image.copy()
-        overlay[mask > 127] = (0.55 * overlay[mask > 127] + np.array([255, 0, 0]) * 0.45).astype(np.uint8)
-        axes[row, 0].imshow(image)
-        axes[row, 0].set_title("Image")
-        axes[row, 1].imshow(mask, cmap="gray")
-        axes[row, 1].set_title("Mask")
-        axes[row, 2].imshow(overlay)
-        axes[row, 2].set_title("Overlay")
-        for col in range(3):
-            axes[row, col].axis("off")
-
-    fig.tight_layout()
     out_figures = Path(args.out_figures)
     out_figures.mkdir(parents=True, exist_ok=True)
     figure_path = out_figures / f"{args.dataset}_samples.png"
-    fig.savefig(figure_path, dpi=200)
-    plt.close(fig)
+    sample_paths = image_paths[: args.max_samples]
+    save_samples_with_matplotlib(sample_paths, mask_dir, ext, figure_path)
     print(f"wrote_stats={stats_path}")
     print(f"wrote_figure={figure_path}")
     return 0

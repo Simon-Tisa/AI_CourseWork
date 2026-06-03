@@ -22,15 +22,56 @@ If required modules are missing, install:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 -m pip install -r requirements.txt
 ```
 
-`pytest`, `timm`, and `medpy` are optional for the current course project. `pytest` is only needed for automated tests; `timm` and `medpy` are not required by the reimplemented training pipeline.
+Optional developer/reporting helpers can be installed with:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 -m pip install -r requirements-optional.txt
+```
+
+`pytest` is only needed for automated tests. `matplotlib` improves figure rendering, but the reporting scripts include a Pillow fallback. `timm` and `medpy` are not required by this reimplemented training pipeline.
 
 ## Data
 
 Place raw public datasets under `data/raw`. Processing scripts will create standardized datasets under `data/processed`.
 
+Expected local layout:
+
+```text
+data/raw/busi/Dataset_BUSI_with_GT/...
+data/raw/cvc/PNG/Original
+data/raw/cvc/PNG/Ground Truth
+```
+
+Prepare data, deterministic splits, and dataset figures:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\prepare_busi.py --raw-dir data\raw\busi --out-dir data\processed
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\prepare_cvc.py --raw-dir data\raw\cvc --out-dir data\processed
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\make_splits.py --dataset busi --seed 2981
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\make_splits.py --dataset cvc --seed 2981
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\dataset_report.py --dataset busi
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\dataset_report.py --dataset cvc
+```
+
 ## Reproducibility
 
 The project uses deterministic splits with U-KAN seeds `2981`, `6142`, and `1187`.
+
+Run a one-batch smoke test before full training:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\busi_ukan.yaml --epochs 1 --limit-train-batches 1 --limit-val-batches 1
+```
+
+Run the main experiment matrix:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\busi_no_kan.yaml
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\busi_ukan.yaml
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\busi_attention_ukan.yaml
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\cvc_ukan.yaml
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\cvc_attention_ukan.yaml
+```
 
 ## Project Structure
 

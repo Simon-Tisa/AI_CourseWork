@@ -3,10 +3,14 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 import yaml
-from PIL import Image
+from PIL import Image, ImageDraw
+
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError:
+    plt = None
 
 from src.ukan_course.utils import read_split
 
@@ -45,6 +49,59 @@ def error_map(pred: np.ndarray, gt: np.ndarray) -> np.ndarray:
     return out
 
 
+def fit_tile(image: Image.Image, size: tuple[int, int]) -> Image.Image:
+    tile = Image.new("RGB", size, "white")
+    fitted = image.copy()
+    fitted.thumbnail(size, Image.Resampling.LANCZOS)
+    offset = ((size[0] - fitted.width) // 2, (size[1] - fitted.height) // 2)
+    tile.paste(fitted, offset)
+    return tile
+
+
+def panel_to_image(panel: np.ndarray) -> Image.Image:
+    return Image.fromarray(panel).convert("RGB")
+
+
+def save_with_pillow(rows: list[list[tuple[np.ndarray, str]]], out: Path) -> None:
+    tile_size = (240, 240)
+    label_height = 24
+    cols = len(rows[0])
+    canvas = Image.new(
+        "RGB",
+        (cols * tile_size[0], len(rows) * (tile_size[1] + label_height)),
+        "white",
+    )
+    draw = ImageDraw.Draw(canvas)
+    for row_idx, row in enumerate(rows):
+        y = row_idx * (tile_size[1] + label_height)
+        for col_idx, (panel, title) in enumerate(row):
+            x = col_idx * tile_size[0]
+            draw.text((x + 8, y + 4), title, fill=(30, 30, 30))
+            canvas.paste(fit_tile(panel_to_image(panel), tile_size), (x, y + label_height))
+    canvas.save(out)
+
+
+def save_with_matplotlib(rows: list[list[tuple[np.ndarray, str]]], out: Path) -> None:
+    if plt is None:
+        save_with_pillow(rows, out)
+        return
+
+    fig, axes = plt.subplots(len(rows), len(rows[0]), figsize=(15, 3 * len(rows)))
+    if len(rows) == 1:
+        axes = np.expand_dims(axes, axis=0)
+
+    for row_idx, row in enumerate(rows):
+        for col_idx, (panel, title) in enumerate(row):
+            cmap = "gray" if panel.ndim == 2 else None
+            axes[row_idx, col_idx].imshow(panel, cmap=cmap)
+            axes[row_idx, col_idx].set_title(title)
+            axes[row_idx, col_idx].axis("off")
+
+    fig.tight_layout()
+    fig.savefig(out, dpi=200)
+    plt.close(fig)
+
+
 def main() -> int:
     args = parse_args()
     base = Path(args.output_dir)
@@ -55,10 +112,7 @@ def main() -> int:
     mask_dir = Path(config["data_dir"]) / "masks" / "0"
     ids = read_split(config["val_split"])[: args.max_samples]
 
-    fig, axes = plt.subplots(len(ids), 5, figsize=(15, 3 * len(ids)))
-    if len(ids) == 1:
-        axes = np.expand_dims(axes, axis=0)
-
+    rows: list[list[tuple[np.ndarray, str]]] = []
     for row, image_id in enumerate(ids):
         image = load_rgb(image_dir / f"{image_id}.png")
         gt = load_gray(mask_dir / f"{image_id}{config['mask_ext']}")
@@ -66,23 +120,19 @@ def main() -> int:
         attention_pred = load_gray(attention_dir / "predictions" / f"{image_id}.png")
         err = error_map(attention_pred, gt)
 
-        panels = [
-            (image, "Image", None),
-            (gt, "Ground Truth", "gray"),
-            (ukan_pred, "U-KAN", "gray"),
-            (attention_pred, "Attention-U-KAN", "gray"),
-            (err, "Error Map", None),
-        ]
-        for col, (panel, title, cmap) in enumerate(panels):
-            axes[row, col].imshow(panel, cmap=cmap)
-            axes[row, col].set_title(title)
-            axes[row, col].axis("off")
+        rows.append(
+            [
+                (image, "Image"),
+                (gt, "Ground Truth"),
+                (ukan_pred, "U-KAN"),
+                (attention_pred, "Attention-U-KAN"),
+                (err, "Error Map"),
+            ]
+        )
 
-    fig.tight_layout()
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=200)
-    plt.close(fig)
+    save_with_matplotlib(rows, out)
     print(f"wrote_figure={out}")
     return 0
 

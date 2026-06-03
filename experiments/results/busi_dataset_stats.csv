@@ -1,0 +1,2 @@
+dataset,num_images,min_width,max_width,min_height,max_height,mean_mask_ratio
+busi,780,190,1048,310,719,0.0782656678353302

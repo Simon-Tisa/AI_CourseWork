@@ -1,14 +1,6 @@
 torch
-torchvision
 opencv-python
 albumentations
-scikit-learn
-pandas
 pyyaml
-timm
-tensorboardX
-medpy
-pytest
-matplotlib
 pillow
-tqdm
+numpy

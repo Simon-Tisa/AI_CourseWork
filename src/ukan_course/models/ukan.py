@@ -238,6 +238,7 @@ class UKAN(nn.Module):
         super().__init__()
         del deep_supervision
         embed_dims = list(embed_dims)
+        self.embed_dims = embed_dims
         kan_input_dim = embed_dims[0]
 
         self.encoder1 = ConvLayer(input_channels, kan_input_dim // 8)

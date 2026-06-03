@@ -27,6 +27,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train U-KAN segmentation models.")
     parser.add_argument("--config", required=True, help="Path to YAML config.")
     parser.add_argument("--output-dir", default="experiments/results")
+    parser.add_argument("--epochs", type=int, default=None, help="Override epochs from config.")
+    parser.add_argument("--batch-size", type=int, default=None, help="Override batch_size from config.")
+    parser.add_argument("--limit-train-batches", type=int, default=None)
+    parser.add_argument("--limit-val-batches", type=int, default=None)
     return parser.parse_args()
 
 
@@ -50,7 +54,12 @@ def build_optimizer(model: torch.nn.Module, config: dict) -> torch.optim.Optimiz
     for name, param in model.named_parameters():
         if not param.requires_grad:
             continue
-        if "layer" in name.lower() and "fc" in name.lower():
+        is_kan_parameter = (
+            not config.get("no_kan", False)
+            and "layer" in name.lower()
+            and "fc" in name.lower()
+        )
+        if is_kan_parameter:
             param_groups.append(
                 {
                     "params": param,
@@ -102,6 +111,7 @@ def run_epoch(
     criterion: torch.nn.Module,
     device: torch.device,
     optimizer: torch.optim.Optimizer | None = None,
+    max_batches: int | None = None,
 ) -> dict[str, float]:
     training = optimizer is not None
     model.train(training)
@@ -110,7 +120,10 @@ def run_epoch(
     total_dice = 0.0
     total_samples = 0
 
-    for images, masks, _ in loader:
+    for batch_idx, (images, masks, _) in enumerate(loader):
+        if max_batches is not None and batch_idx >= max_batches:
+            break
+
         images = images.to(device)
         masks = masks.to(device)
 
@@ -152,6 +165,10 @@ def append_log(path: Path, row: dict[str, float | int]) -> None:
 def main() -> int:
     args = parse_args()
     config = load_config(args.config)
+    if args.epochs is not None:
+        config["epochs"] = args.epochs
+    if args.batch_size is not None:
+        config["batch_size"] = args.batch_size
     seed_everything(config["seed"])
 
     exp_dir = ensure_dir(Path(args.output_dir) / config["name"])
@@ -177,9 +194,23 @@ def main() -> int:
 
     best_iou = -1.0
     for epoch in range(config["epochs"]):
-        train_log = run_epoch(model, train_loader, criterion, device, optimizer)
+        train_log = run_epoch(
+            model,
+            train_loader,
+            criterion,
+            device,
+            optimizer,
+            max_batches=args.limit_train_batches,
+        )
         with torch.no_grad():
-            val_log = run_epoch(model, val_loader, criterion, device, optimizer=None)
+            val_log = run_epoch(
+                model,
+                val_loader,
+                criterion,
+                device,
+                optimizer=None,
+                max_batches=args.limit_val_batches,
+            )
         scheduler.step()
 
         row = {

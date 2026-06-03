@@ -11,16 +11,13 @@ REQUIRED_MODULES = [
     "albumentations",
     "yaml",
     "PIL",
-    "matplotlib",
     "numpy",
 ]
 
 OPTIONAL_MODULES = [
-    "torchvision",
+    "matplotlib",
     "tensorboardX",
     "pytest",
-    "timm",
-    "medpy",
 ]
 
 
