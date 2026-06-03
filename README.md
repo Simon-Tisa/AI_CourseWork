@@ -60,8 +60,10 @@ The project uses deterministic splits with U-KAN seeds `2981`, `6142`, and `1187
 Run a one-batch smoke test before full training:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\busi_ukan.yaml --epochs 1 --limit-train-batches 1 --limit-val-batches 1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\busi_ukan.yaml --epochs 1 --limit-train-batches 1 --limit-val-batches 1 --output-dir experiments\smoke --run-name smoke_busi_ukan_seed2981 --overwrite
 ```
+
+Training starts from scratch. If an experiment directory already contains `log.csv`, use `--overwrite` intentionally or choose another `--run-name`/`--output-dir`.
 
 Run the main experiment matrix:
 

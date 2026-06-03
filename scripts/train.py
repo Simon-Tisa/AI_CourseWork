@@ -36,6 +36,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=None, help="Override batch_size from config.")
     parser.add_argument("--limit-train-batches", type=int, default=None)
     parser.add_argument("--limit-val-batches", type=int, default=None)
+    parser.add_argument("--run-name", default=None, help="Override experiment name from config.")
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite an existing run log/checkpoint.")
     return parser.parse_args()
 
 
@@ -180,9 +182,23 @@ def main() -> int:
         config["epochs"] = args.epochs
     if args.batch_size is not None:
         config["batch_size"] = args.batch_size
+    if args.run_name is not None:
+        config["name"] = args.run_name
     seed_everything(config["seed"])
 
     exp_dir = ensure_dir(Path(args.output_dir) / config["name"])
+    log_path = exp_dir / "log.csv"
+    checkpoint_path = exp_dir / "model.pth"
+    if log_path.exists():
+        if not args.overwrite:
+            raise FileExistsError(
+                f"{log_path} already exists. Use --overwrite to rerun from scratch "
+                "or choose a different --run-name/--output-dir."
+            )
+        log_path.unlink()
+    if checkpoint_path.exists() and args.overwrite:
+        checkpoint_path.unlink()
+
     with (exp_dir / "config.yml").open("w", encoding="utf-8") as file:
         yaml.safe_dump(config, file, allow_unicode=True, sort_keys=False)
 
@@ -234,7 +250,7 @@ def main() -> int:
             "val_iou": val_log["iou"],
             "val_dice": val_log["dice"],
         }
-        append_log(exp_dir / "log.csv", row)
+        append_log(log_path, row)
 
         if writer is not None:
             writer.add_scalar("train/loss", train_log["loss"], epoch)
@@ -251,7 +267,7 @@ def main() -> int:
 
         if val_log["iou"] > best_iou:
             best_iou = val_log["iou"]
-            torch.save(model.state_dict(), exp_dir / "model.pth")
+            torch.save(model.state_dict(), checkpoint_path)
             print(f"saved_best_model val_iou={best_iou:.4f}")
 
     if writer is not None:

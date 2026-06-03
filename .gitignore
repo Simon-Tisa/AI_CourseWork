@@ -5,6 +5,9 @@ __pycache__/
 data/raw/
 data/processed/
 experiments/logs/
+experiments/smoke/
+experiments/results/**/config.yml
+experiments/results/**/log.csv
 experiments/results/**/model.pth
 experiments/results/**/events.out.tfevents*
 experiments/results/**/predictions/
