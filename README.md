@@ -22,6 +22,8 @@ If required modules are missing, install:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 -m pip install -r requirements.txt
 ```
 
+`pytest`, `timm`, and `medpy` are optional for the current course project. `pytest` is only needed for automated tests; `timm` and `medpy` are not required by the reimplemented training pipeline.
+
 ## Data
 
 Place raw public datasets under `data/raw`. Processing scripts will create standardized datasets under `data/processed`.

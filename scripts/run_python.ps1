@@ -14,7 +14,10 @@ if (Test-Path -LiteralPath $TorchPython) {
     if ($LASTEXITCODE -eq 0) {
         exit 0
     }
-    Write-Warning "Preferred torch interpreter exited with code $LASTEXITCODE. Falling back to another Python interpreter."
+    if ($LASTEXITCODE -ne -1073741790) {
+        exit $LASTEXITCODE
+    }
+    Write-Warning "Preferred torch interpreter crashed with code $LASTEXITCODE. Falling back to another Python interpreter."
     $env:PATH = $OriginalPath
 }
 

@@ -5,18 +5,22 @@ import platform
 import sys
 
 
-MODULES = [
+REQUIRED_MODULES = [
     "torch",
-    "torchvision",
     "cv2",
     "albumentations",
-    "sklearn",
-    "pandas",
     "yaml",
-    "timm",
+    "PIL",
+    "matplotlib",
+    "numpy",
+]
+
+OPTIONAL_MODULES = [
+    "torchvision",
     "tensorboardX",
-    "medpy",
     "pytest",
+    "timm",
+    "medpy",
 ]
 
 
@@ -28,8 +32,10 @@ def main() -> int:
     print(f"python_executable={sys.executable}")
     print(f"python_version={sys.version.split()[0]}")
     print(f"platform={platform.platform()}")
-    for name in MODULES:
-        print(f"module.{name}={module_available(name)}")
+    for name in REQUIRED_MODULES:
+        print(f"required.{name}={module_available(name)}")
+    for name in OPTIONAL_MODULES:
+        print(f"optional.{name}={module_available(name)}")
 
     if module_available("torch"):
         import torch
@@ -41,9 +47,12 @@ def main() -> int:
         if torch.cuda.is_available():
             print(f"torch_device_0={torch.cuda.get_device_name(0)}")
 
-    missing = [name for name in MODULES if not module_available(name)]
-    if missing:
-        print("missing_modules=" + ",".join(missing))
+    missing_required = [name for name in REQUIRED_MODULES if not module_available(name)]
+    missing_optional = [name for name in OPTIONAL_MODULES if not module_available(name)]
+    if missing_optional:
+        print("missing_optional_modules=" + ",".join(missing_optional))
+    if missing_required:
+        print("missing_required_modules=" + ",".join(missing_required))
         return 2
     return 0
 
