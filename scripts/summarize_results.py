@@ -12,6 +12,20 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def variant_label(row: dict[str, str]) -> str:
+    name = row.get("name", "")
+    model = row.get("model", "")
+    if model == "unet":
+        return "U-Net"
+    if model == "attention_ukan":
+        return "Attention-U-KAN"
+    if "no_kan" in name:
+        return "U-KAN(no-KAN)"
+    if model == "ukan":
+        return "U-KAN"
+    return model
+
+
 def main() -> int:
     args = parse_args()
     rows: list[dict[str, str]] = []
@@ -24,7 +38,9 @@ def main() -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", newline="", encoding="utf-8") as file:
         fieldnames = [
+            "name",
             "dataset",
+            "variant",
             "model",
             "seed",
             "iou",
@@ -38,6 +54,7 @@ def main() -> int:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         for row in rows:
+            row["variant"] = variant_label(row)
             writer.writerow({key: row.get(key, "") for key in fieldnames})
 
     print(f"wrote_table={out} rows={len(rows)}")

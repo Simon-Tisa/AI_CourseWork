@@ -1,0 +1,2 @@
+name,dataset,model,seed,iou,dice,precision,recall,specificity,params,infer_ms_per_image
+busi_attention_ukan_seed2981,busi,attention_ukan,2981,0.6769490503346592,0.807357922054417,0.8075151310163803,0.8072007742921667,0.9827760556876592,6362713,40.6914903847232

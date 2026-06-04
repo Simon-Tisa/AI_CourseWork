@@ -9,31 +9,50 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 import numpy as np
-import yaml
 from PIL import Image, ImageDraw
+
+try:
+    import yaml
+except ModuleNotFoundError:
+    yaml = None
 
 try:
     import matplotlib.pyplot as plt
 except ModuleNotFoundError:
     plt = None
 
-from src.ukan_course.utils import read_split
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Visualize U-KAN and Attention-U-KAN predictions.")
     parser.add_argument("--dataset", required=True)
     parser.add_argument("--ukan-name", required=True)
     parser.add_argument("--attention-name", required=True)
-    parser.add_argument("--out", required=True)
+    parser.add_argument("--output-path", required=True)
     parser.add_argument("--output-dir", default="experiments/results")
     parser.add_argument("--max-samples", type=int, default=4)
     return parser.parse_args()
 
 
+def read_split(path: str | Path) -> list[str]:
+    return [line.strip() for line in Path(path).read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
 def load_config(exp_dir: Path) -> dict:
     with (exp_dir / "config.yml").open("r", encoding="utf-8") as file:
-        return yaml.safe_load(file)
+        if yaml is not None:
+            return yaml.safe_load(file)
+        config: dict[str, str | int | float | bool] = {}
+        for line in file:
+            if ":" not in line or line.startswith(" "):
+                continue
+            key, value = line.split(":", 1)
+            value = value.strip()
+            if value.lower() in {"true", "false"}:
+                config[key] = value.lower() == "true"
+            elif value.isdigit():
+                config[key] = int(value)
+            else:
+                config[key] = value
+        return config
 
 
 def load_rgb(path: Path) -> np.ndarray:
@@ -42,6 +61,22 @@ def load_rgb(path: Path) -> np.ndarray:
 
 def load_gray(path: Path) -> np.ndarray:
     return np.asarray(Image.open(path).convert("L"))
+
+
+def resize_rgb(image: np.ndarray, shape: tuple[int, int]) -> np.ndarray:
+    height, width = shape
+    pil_image = Image.fromarray(image).convert("RGB")
+    if pil_image.size == (width, height):
+        return image
+    return np.asarray(pil_image.resize((width, height), Image.Resampling.BILINEAR))
+
+
+def resize_gray(mask: np.ndarray, shape: tuple[int, int]) -> np.ndarray:
+    height, width = shape
+    pil_mask = Image.fromarray(mask).convert("L")
+    if pil_mask.size == (width, height):
+        return mask
+    return np.asarray(pil_mask.resize((width, height), Image.Resampling.NEAREST))
 
 
 def error_map(pred: np.ndarray, gt: np.ndarray) -> np.ndarray:
@@ -123,6 +158,10 @@ def main() -> int:
         gt = load_gray(mask_dir / f"{image_id}{config['mask_ext']}")
         ukan_pred = load_gray(ukan_dir / "predictions" / f"{image_id}.png")
         attention_pred = load_gray(attention_dir / "predictions" / f"{image_id}.png")
+        target_shape = attention_pred.shape
+        image = resize_rgb(image, target_shape)
+        gt = resize_gray(gt, target_shape)
+        ukan_pred = resize_gray(ukan_pred, target_shape)
         err = error_map(attention_pred, gt)
 
         rows.append(
@@ -135,7 +174,7 @@ def main() -> int:
             ]
         )
 
-    out = Path(args.out)
+    out = Path(args.output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     save_with_matplotlib(rows, out)
     print(f"wrote_figure={out}")
