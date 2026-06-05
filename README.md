@@ -73,6 +73,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\s
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\busi_ukan.yaml
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\busi_attention_ukan.yaml
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\cvc_unet.yaml
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\cvc_no_kan.yaml
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\cvc_ukan.yaml
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\train.py --config configs\cvc_attention_ukan.yaml
 ```
@@ -85,6 +86,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\s
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\evaluate.py --name busi_ukan_seed2981
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\evaluate.py --name busi_attention_ukan_seed2981
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\evaluate.py --name cvc_unet_seed2981
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\evaluate.py --name cvc_no_kan_seed2981
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\evaluate.py --name cvc_ukan_seed2981
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\evaluate.py --name cvc_attention_ukan_seed2981
 ```
@@ -93,7 +95,7 @@ Generate paper-ready tables and prediction figures:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\plot_training_curves.py --names busi_unet_seed2981 busi_no_kan_seed2981 busi_ukan_seed2981 busi_attention_ukan_seed2981 --out experiments\figures\busi_training_curves.png
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\plot_training_curves.py --names cvc_unet_seed2981 cvc_ukan_seed2981 cvc_attention_ukan_seed2981 --out experiments\figures\cvc_training_curves.png
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\plot_training_curves.py --names cvc_unet_seed2981 cvc_no_kan_seed2981 cvc_ukan_seed2981 cvc_attention_ukan_seed2981 --out experiments\figures\cvc_training_curves.png
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\visualize_predictions.py --dataset busi --ukan-name busi_ukan_seed2981 --attention-name busi_attention_ukan_seed2981 --output-path experiments\figures\busi_prediction_comparison.png
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\visualize_predictions.py --dataset cvc --ukan-name cvc_ukan_seed2981 --attention-name cvc_attention_ukan_seed2981 --output-path experiments\figures\cvc_prediction_comparison.png
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\summarize_results.py

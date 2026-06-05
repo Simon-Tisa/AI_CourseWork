@@ -55,10 +55,11 @@
 | E3 | BUSI | U-KAN | 主复现实验 |
 | E4 | BUSI | Attention-U-KAN | 改进模型 |
 | E5 | CVC | U-Net | 补充 CNN 基线 |
-| E6 | CVC | U-KAN | 跨数据集复现 |
-| E7 | CVC | Attention-U-KAN | 跨数据集改进验证 |
+| E6 | CVC | U-KAN `--no_kan` | 补充 KAN 模块消融 |
+| E7 | CVC | U-KAN | 跨数据集复现 |
+| E8 | CVC | Attention-U-KAN | 跨数据集改进验证 |
 
-优先级：先跑 BUSI 四组，再跑 CVC 三组。若时间紧张，论文主体至少保证 BUSI 四组和 CVC 的 U-KAN/Attention-U-KAN。
+优先级：先跑 BUSI 四组，再跑 CVC 四组。若时间紧张，论文主体至少保证 BUSI 四组和 CVC 的 U-KAN/Attention-U-KAN。
 
 ## 已生成资产
 
