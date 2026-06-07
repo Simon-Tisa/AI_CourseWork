@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 
 from src.ukan_course.datasets.segmentation_dataset import SegmentationDataset
 from src.ukan_course.losses import BCEDiceLoss
-from src.ukan_course.metrics import dice_score, iou_score
+from src.ukan_course.metrics import binary_stats, scores_from_stats
 from src.ukan_course.models import AttentionUKAN, UKAN, UNet
 from src.ukan_course.utils import count_parameters, ensure_dir, read_split, seed_everything
 
@@ -38,6 +38,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit-val-batches", type=int, default=None)
     parser.add_argument("--run-name", default=None, help="Override experiment name from config.")
     parser.add_argument("--overwrite", action="store_true", help="Overwrite an existing run log/checkpoint.")
+    parser.add_argument("--seed", type=int, default=None, help="Override seed from config.")
+    parser.add_argument("--lr", type=float, default=None, help="Override lr from config.")
+    parser.add_argument("--kan-lr", type=float, default=None, help="Override kan_lr from config.")
+    parser.add_argument("--min-lr", type=float, default=None, help="Override min_lr from config.")
+    parser.add_argument("--resume-from", default=None, help="Load model weights before training.")
     return parser.parse_args()
 
 
@@ -129,8 +134,7 @@ def run_epoch(
     training = optimizer is not None
     model.train(training)
     total_loss = 0.0
-    total_iou = 0.0
-    total_dice = 0.0
+    total_stats = {"tp": 0, "fp": 0, "fn": 0, "tn": 0}
     total_samples = 0
 
     for batch_idx, (images, masks, _) in enumerate(loader):
@@ -152,14 +156,16 @@ def run_epoch(
 
         batch_size = images.size(0)
         total_loss += loss.item() * batch_size
-        total_iou += iou_score(logits.detach(), masks.detach()) * batch_size
-        total_dice += dice_score(logits.detach(), masks.detach()) * batch_size
+        batch_stats = binary_stats(logits.detach(), masks.detach())
+        for key, value in batch_stats.items():
+            total_stats[key] += value
         total_samples += batch_size
 
+    scores = scores_from_stats(total_stats)
     return {
         "loss": total_loss / max(total_samples, 1),
-        "iou": total_iou / max(total_samples, 1),
-        "dice": total_dice / max(total_samples, 1),
+        "iou": scores["iou"],
+        "dice": scores["dice"],
     }
 
 
@@ -184,6 +190,14 @@ def main() -> int:
         config["batch_size"] = args.batch_size
     if args.run_name is not None:
         config["name"] = args.run_name
+    if args.seed is not None:
+        config["seed"] = args.seed
+    if args.lr is not None:
+        config["lr"] = args.lr
+    if args.kan_lr is not None:
+        config["kan_lr"] = args.kan_lr
+    if args.min_lr is not None:
+        config["min_lr"] = args.min_lr
     seed_everything(config["seed"])
 
     exp_dir = ensure_dir(Path(args.output_dir) / config["name"])
@@ -196,7 +210,9 @@ def main() -> int:
                 "or choose a different --run-name/--output-dir."
             )
         log_path.unlink()
-    if checkpoint_path.exists() and args.overwrite:
+    resume_path = Path(args.resume_from).resolve() if args.resume_from is not None else None
+    is_resume_checkpoint = resume_path is not None and checkpoint_path.resolve() == resume_path
+    if checkpoint_path.exists() and args.overwrite and not is_resume_checkpoint:
         checkpoint_path.unlink()
 
     with (exp_dir / "config.yml").open("w", encoding="utf-8") as file:
@@ -204,6 +220,10 @@ def main() -> int:
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = build_model(config).to(device)
+    if resume_path is not None:
+        checkpoint = torch.load(resume_path, map_location=device)
+        model.load_state_dict(checkpoint)
+        print(f"resumed_from={resume_path}")
     criterion = BCEDiceLoss().to(device)
     optimizer = build_optimizer(model, config)
     scheduler = lr_scheduler.CosineAnnealingLR(
@@ -221,6 +241,7 @@ def main() -> int:
 
     best_iou = -1.0
     for epoch in range(config["epochs"]):
+        current_lr = optimizer.param_groups[0]["lr"]
         train_log = run_epoch(
             model,
             train_loader,
@@ -238,11 +259,10 @@ def main() -> int:
                 optimizer=None,
                 max_batches=args.limit_val_batches,
             )
-        scheduler.step()
 
         row = {
             "epoch": epoch,
-            "lr": optimizer.param_groups[0]["lr"],
+            "lr": current_lr,
             "loss": train_log["loss"],
             "iou": train_log["iou"],
             "dice": train_log["dice"],
@@ -269,6 +289,8 @@ def main() -> int:
             best_iou = val_log["iou"]
             torch.save(model.state_dict(), checkpoint_path)
             print(f"saved_best_model val_iou={best_iou:.4f}")
+
+        scheduler.step()
 
     if writer is not None:
         writer.close()
