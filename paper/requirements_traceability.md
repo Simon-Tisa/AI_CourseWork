@@ -1,48 +1,72 @@
-# 课程论文要求与项目完成度追踪
+# 课程论文要求与项目完成度最终追踪
+
+最后复核日期：2026-06-08
 
 ## 选题定位
 
-本项目选择《人工智能》课程论文方向（一）：复现任意人工智能算法。论文拟题为：
+本项目选择《人工智能》课程论文方向（一）：复现任意人工智能算法。
 
-**基于 U-KAN 的医学图像分割算法复现与注意力增强改进研究**
+最终论文题目：
 
-核心任务是复现 U-KAN 在二维医学图像分割中的主要模型思想、训练流程和评价方式，并在此基础上加入轻量通道-空间注意力模块，形成 Attention-U-KAN 改进模型。实验使用 BUSI 作为主数据集，CVC-ClinicDB 作为补充数据集，并加入 U-Net 与 U-KAN(no-KAN) 作为对照。
+**基于 U-KAN 的医学图像分割算法复现、实验诊断与注意力增强研究**
 
-## 课程要求拆解
+说明：早期讨论中曾口误写成 kNN / UKNN，最终已统一纠正为 KAN / U-KAN。项目围绕 Kolmogorov-Arnold Network 在医学图像分割中的应用展开，复现 U-KAN，并加入 Attention-U-KAN 改进尝试、U-Net 基线和 no-KAN 消融。
 
-| 课程要求 | 本项目对应内容 | 当前状态 |
+## 最终交付物
+
+| 交付物 | 文件/位置 | 状态 |
 | --- | --- | --- |
-| 课程论文来源说明 | 需说明 U-KAN 论文、官方源码、KAN/pykan、相关 KAN 医学分割论文、公开数据集、大语言模型辅助情况 | 待写入论文正文 |
-| 摘要 | 概括医学图像分割背景、U-KAN 复现、Attention-U-KAN 改进、BUSI/CVC 结果和结论 | 待写 |
-| 引言 | 说明医学图像分割意义、U-Net 系列局限、KAN 的非线性建模动机和选择 U-KAN 的原因 | 待写 |
-| 算法简介 | 介绍 U-Net、KANLinear、B-spline、Tokenized KAN Block、U-KAN 编码器/解码器、Attention-U-KAN | 代码和资料已具备，正文待写 |
-| 数据介绍 | BUSI 780 张图像，CVC 612 张图像，均完成 80/20 划分 | 已完成 |
-| 数据预处理 | BUSI 多 mask 并集合并；CVC 图像/mask 标准化；二值化 mask；统一 split 文件 | 已完成 |
-| 数据可视化 | `busi_samples.png`、`cvc_samples.png` | 已完成 |
-| 实验环境 | Python 3.10.18、PyTorch 2.9.1+cu126、RTX 4080 Laptop GPU 等 | 已有 doctor 脚本，论文需整理截图 |
-| 参数设置 | YAML 记录 input size、batch size、epoch、lr、kan_lr、seed、embed dims | 已完成 |
-| 对照实验 | U-Net、U-KAN(no-KAN)、U-KAN、Attention-U-KAN；BUSI/CVC 各四组 | 已完成主实验 |
-| 定量评估 | IoU、Dice、Precision、Recall、Specificity、参数量、单图推理时间 | 已完成 |
-| 定性评估 | 原图、GT、U-KAN、Attention-U-KAN、error map 对比图 | 已完成 BUSI/CVC |
-| 错误案例分析 | 基于预测对比图和 error map 分析漏分/误分 | 待写入正文 |
-| 代码运行截图 | 训练、评估、可视化、结果汇总命令截图 | 原始截图已放在课程要求目录，论文需筛选排版 |
-| 讨论 | 分析 U-KAN 收益、注意力模块未稳定提升、随机种子波动、训练轮数不足风险 | 已有分析材料 |
-| 结论 | 总结复现和改进实验结论 | 待写 |
-| 参考文献 | U-KAN、KAN、pykan、KC-UNet、ResU-KAN、数据集、开源代码等 | 待统一格式 |
+| Word 课程论文 | `paper/基于U-KAN的医学图像分割算法复现、实验诊断与注意力增强研究_重写版.docx` | 已完成 |
+| Markdown 正文源稿 | `paper/course_paper_draft_v2.md` | 已完成 |
+| 论文生成脚本 | `scripts/build_course_paper_v2.py` | 已完成，可重新生成 Word 和图表 |
+| 主实验与补实验表格 | `paper/tables/*.csv` | 已完成 |
+| 论文图片 | `paper/figures/` 与 `experiments/figures/` | 已完成 |
+| 工程代码 | `src/`, `scripts/`, `configs/`, `tests/` | 已完成 |
+| README | `README.md` | 已完成，包含环境、数据、训练、评估、绘图和论文生成命令 |
+| Git 提交 | `b023484 docs: rewrite course paper with experiment diagnosis` | 已完成 |
+| GitHub 远端推送 | `origin=https://github.com/Simon-Tisa/AI_CourseWork.git` | 本地已提交；推送受 Windows/GitHub 凭据限制 |
+
+## 课程要求逐项验收
+
+| 课程要求 | 最终落实方式 | 状态 |
+| --- | --- | --- |
+| 方向（一）复现任意人工智能算法 | 复现 U-KAN 医学图像分割算法；本地重写 PyTorch 训练、评估和报告流程 | 已完成 |
+| 算法原理介绍 | 论文第 3 章说明 KAN 与 MLP 的区别、U-KAN 结构、Attention-U-KAN 改进 | 已完成 |
+| 模型搭建 | `src/ukan_course/models/` 实现 U-Net、U-KAN、no-KAN、Attention-U-KAN | 已完成 |
+| 实验平台 | 论文表 3 记录 Python、PyTorch、CUDA、RTX 4080 Laptop GPU 等环境 | 已完成 |
+| 训练过程 | 训练日志、训练曲线、`实验记录.docx`、`experiments/figures/*training_curves.png` | 已完成 |
+| 实验结果展示与分析 | 论文第 5-7 章包含主实验、消融、补实验、效率和错误案例分析 | 已完成 |
+| 正文字数不少于 2000 字 | DOCX 结构检查显示中文字符规模约 3714，超过要求 | 已完成 |
+| 正文字体小四、1.5 倍行距 | DOCX Normal 样式为 12pt；正文段落 1.5 倍行距 | 已完成 |
+| 课程论文来源说明 | 正文开头“来源说明与过程声明”说明论文、源码、数据集、LLM 辅助和图源 | 已完成 |
+| 每张图片注明来源 | 图 1-图 14 均在图注中写明作者自绘、论文/官方项目来源或本项目生成 | 已完成 |
+| 摘要 | 说明背景、算法、实验矩阵、补充实验和结论 | 已完成 |
+| 引言 | 说明医学图像分割背景、U-Net 局限、KAN 动机和选题原因 | 已完成 |
+| 数据介绍与预处理 | BUSI/CVC 数据规模、mask 占比、BUSI 多 mask 合并、固定 split | 已完成 |
+| 数据可视化 | 图 5 展示 BUSI 与 CVC 样本；`experiments/figures/*samples.png` 也保留 | 已完成 |
+| 实验设置与参数 | 论文表 3 与 YAML 配置对应，包含 batch size、epoch、lr、kan_lr、seed 等 | 已完成 |
+| 对照实验 | 每个数据集均包含 U-Net、no-KAN、U-KAN、Attention-U-KAN 四组 | 已完成 |
+| 定量评估 | IoU、Dice、Precision、Recall、Specificity、参数量、推理时间 | 已完成 |
+| 定性评估 | BUSI/CVC 预测对比图和错误案例图 | 已完成 |
+| 错误案例分析 | 图 14 与第 6.5 节分析边界偏差、漏分割和过分割原因 | 已完成 |
+| 代码运行截图 | 根目录 `实验记录.docx` 与课程要求图片目录保存训练/评估过程截图；正文中用流程图和训练曲线归纳 | 已完成 |
+| 讨论 | 论文讨论 KAN 收益、Attention 负结果、seed 波动、CVC 继续训练、效率代价 | 已完成 |
+| 结论 | 第 8 章总结复现结果、补实验结论和局限 | 已完成 |
+| 参考文献 | 论文列出 U-KAN、KAN、U-Net、CBAM、相关 KAN 医学论文和数据集来源 | 已完成 |
 
 ## 加分项覆盖
 
-| 加分项 | 课程要求 | 本项目落实情况 |
+| 加分项 | 课程要求 | 最终落实情况 |
 | --- | --- | --- |
-| GitHub 源代码链接 | 完整代码上传 GitHub，不以附件或微信方式提交源码 | remote 已指向 `https://github.com/Simon-Tisa/AI_CourseWork.git`，本地分支需 push |
-| 详细 README | 依赖、环境配置、数据准备、运行步骤、项目结构 | `README.md` 已覆盖数据、训练、评估、绘图、结果汇总命令 |
-| 项目结构 | 模块划分清晰、代码注释合理、可维护 | 已按 `configs`、`scripts`、`src`、`tests`、`experiments`、`paper` 组织 |
-| 数据整理 | 可使用公开数据集并进一步整理、清洗和标注 | BUSI/CVC 已统一为 U-KAN 所需格式；BUSI 多 mask 已合并 |
-| 论文排版 | 标题编号、图表编号、公式、参考文献、图源标注规范 | 待在最终 Word 论文中完成 |
-| 自绘图片 | 自绘结构图、流程图可加分 | 待绘制 U-KAN 结构图、Attention 模块图、实验流程图 |
-| 过程记录 | 高分建议体现额外实践投入、过程记录或独立思考 | 已有训练截图、结果表、诊断表和补实验计划 |
+| GitHub 源代码链接 | 完整代码上传 GitHub，不以附件或微信提交源码 | 仓库 remote 已设为 `https://github.com/Simon-Tisa/AI_CourseWork.git`；本地提交已完成，推送需本机凭据 |
+| 详细 README | 说明依赖、环境、数据准备、运行步骤、项目结构 | `README.md` 已覆盖环境诊断、数据处理、训练、评估、绘图、论文生成和项目结构 |
+| 项目结构 | 模块划分清晰、代码可读、可维护 | `configs/`, `scripts/`, `src/`, `tests/`, `experiments/`, `paper/` 分层组织 |
+| 自构/整理数据集 | 可用公开数据集并进一步整理清洗 | BUSI 多 mask 并集合并；CVC 标准化；固定 split；生成数据统计和样本图 |
+| 论文格式排版 | 标题层次、图表编号、来源、参考文献、页面美观 | Word 使用真实 Heading 样式、正文小四 1.5 倍行距、11 张表、14 张图 |
+| 自绘图片 | PowerPoint/Visio/AI 等自绘可酌情加分 | 使用作者 PPT 手绘图，另自绘 KAN/Attention/实验流程/诊断流程/补实验图 |
+| 过程记录与独立思考 | 高分建议体现额外实践和思考过程 | 第 6 章完整写出 BUSI no-KAN 跳变疑问、seed 6142 验证、CVC 继续训练验证 |
 
-## 当前实验矩阵
+## 实验矩阵
 
 | 编号 | 数据集 | 模型 | 目的 | 状态 |
 | --- | --- | --- | --- | --- |
@@ -50,61 +74,39 @@
 | E2 | BUSI | U-KAN(no-KAN) | MLP 替代 KAN 的消融 | 已完成 |
 | E3 | BUSI | U-KAN | 主复现实验 | 已完成 |
 | E4 | BUSI | Attention-U-KAN | 注意力增强改进 | 已完成 |
-| E5 | CVC | U-Net | 补充 CNN 基线 | 已完成 |
-| E6 | CVC | U-KAN(no-KAN) | 补充 KAN 消融 | 已完成 |
+| E5 | CVC | U-Net | 跨数据集 CNN 基线 | 已完成 |
+| E6 | CVC | U-KAN(no-KAN) | 跨数据集 KAN 消融 | 已完成 |
 | E7 | CVC | U-KAN | 跨数据集复现 | 已完成 |
 | E8 | CVC | Attention-U-KAN | 跨数据集改进验证 | 已完成 |
 | E9 | BUSI | no-KAN / U-KAN seed 6142 | 随机种子稳定性补实验 | 已完成 |
 | E10 | CVC | U-KAN 继续训练 | 收敛性补实验 | 已完成 |
 
-## 已生成资产
+## 最终主要结论
 
-数据与统计：
+1. BUSI 主实验中 U-KAN 取得 IoU=0.6874、Dice=0.8147，是四组模型中最优。
+2. CVC 主实验中 U-KAN 取得 IoU=0.7874、Dice=0.8810，也是四组模型中最优。
+3. no-KAN 与 U-KAN 的对比说明，在相同 U 型主体框架中，KANLinear 相比普通 Linear 对分割性能有实际贡献。
+4. Attention-U-KAN 在 BUSI 和 CVC 上均未超过原始 U-KAN，因此论文将其作为改进尝试和负结果讨论，而不是强行写成提升。
+5. BUSI seed 6142 补实验显示 U-KAN 仍高于 no-KAN，但 BUSI 绝对指标对随机划分和初始化敏感。
+6. CVC U-KAN 继续训练 50 epoch 未超过原始 best checkpoint，因此当前证据不支持“只是没跑够”的简单解释。
+7. U-KAN 推理速度显著慢于 U-Net，说明 KAN 带来精度收益的同时也有推理时间代价。
 
-- `data/splits/busi_seed2981_train.txt`
-- `data/splits/busi_seed2981_val.txt`
-- `data/splits/cvc_seed2981_train.txt`
-- `data/splits/cvc_seed2981_val.txt`
-- `data/splits/busi_seed6142_train.txt`
-- `data/splits/busi_seed6142_val.txt`
-- `experiments/results/busi_dataset_stats.csv`
-- `experiments/results/cvc_dataset_stats.csv`
+## 质量检查记录
 
-论文图：
+| 检查项 | 结果 |
+| --- | --- |
+| `scripts/build_course_paper_v2.py` 重新生成论文 | 通过 |
+| Python 编译检查 | `python -m py_compile scripts/build_course_paper_v2.py` 通过 |
+| DOCX 结构解析 | 108 段、11 表、14 图、16 个 Heading |
+| 正文规模 | 中文字符规模约 3714，满足不少于 2000 字 |
+| 正文格式 | Normal 样式 12pt，正文段落 1.5 倍行距 |
+| 新增关键图片视觉抽查 | 实验流程图、诊断流程图、补实验图、错误案例图均已打开检查 |
+| 页面级渲染 | 受本机缺少 DOCX 转 PDF/PNG 外部转换程序限制，`render_docx.py` 报 WinError 2 |
 
-- `experiments/figures/busi_samples.png`
-- `experiments/figures/cvc_samples.png`
-- `experiments/figures/busi_training_curves.png`
-- `experiments/figures/cvc_training_curves.png`
-- `experiments/figures/busi_prediction_comparison.png`
-- `experiments/figures/cvc_prediction_comparison.png`
+## 当前唯一外部缺口
 
-论文表：
+本地分支 `course-paper-ukan` 已提交最终论文，但 `git push origin course-paper-ukan` 在当前受限进程中无法访问 Windows/GitHub 凭据，报 `SEC_E_NO_CREDENTIALS`。需要在用户本机终端执行：
 
-- `paper/tables/segmentation_results.csv`
-- `paper/tables/training_diagnostics.csv`
-- `paper/tables/busi_seed_stability.csv`
-- `paper/tables/cvc_continued_training.csv`
-
-## 当前主要结论
-
-1. BUSI 上 U-KAN 的 IoU/Dice 为 0.6874/0.8147，是四个模型中最优，优于 U-Net、no-KAN 和 Attention-U-KAN。
-2. CVC 上 U-KAN 的 IoU/Dice 为 0.7874/0.8810，也略优于 U-Net 和 no-KAN。
-3. Attention-U-KAN 在 BUSI 和 CVC 上均未超过原始 U-KAN，说明简单通道-空间注意力并非稳定增益，应作为改进尝试和局限讨论，而不是强行包装成全面提升。
-4. U-Net 推理速度显著快于 U-KAN 系列，KAN 提升精度的同时带来更高推理时间，这可以写入效率分析。
-5. BUSI no-KAN 在 seed 2981 中存在局部峰值；seed 6142 补实验显示 U-KAN 仍高于 no-KAN，但整体指标下降，说明 KAN 收益较稳定，而 BUSI 绝对性能受随机划分影响明显。
-6. CVC U-KAN 继续训练 50 epoch 未超过原 100 epoch best checkpoint，说明当前 U-KAN 设置基本达到平台期；CVC 与官方参考结果的差距不宜简单归因于未继续训练。
-
-## 当前缺口
-
-1. GitHub 远端尚需用户本机执行 `git push origin course-paper-ukan`。
-2. 论文正文尚未完成，包括摘要、引言、算法原理、实验设计、结果分析、讨论、结论和参考文献。
-3. 自绘图尚未完成，包括 U-KAN 结构图、Attention-U-KAN 模块图、实验流程图、数据处理流程图。
-4. 课程论文最终 Word 排版尚未完成，需要按课程要求设置小四号、1.5 倍行距、图表编号和来源标注。
-
-## 下一步优先级
-
-1. 基于已完成的 11 行结果表和两张补实验表，撰写“实验结果与分析”和“讨论”章节。
-2. 撰写不依赖新增实验的正文部分：课程论文来源说明、引言、算法原理、数据与实验设置。
-3. 整理参考文献和图源说明。
-4. 生成自绘图并开始 Word 论文排版。
+```powershell
+git push origin course-paper-ukan
+```

@@ -129,7 +129,8 @@ paper/        Course-paper figures, tables, and draft materials.
 
 Current paper-preparation files:
 
-- `paper/requirements_traceability.md`: course requirements, bonus-item coverage, experiment matrix, and remaining gaps.
+- `paper/requirements_traceability.md`: final course-requirement traceability, bonus-item coverage, experiment matrix, verification evidence, and remaining external push gap.
+- `paper/final_quality_audit.md`: final paper-quality audit covering requirement fit, figure/table coverage, engineering reproducibility, verification commands, and residual risks.
 - `paper/draft_outline.md`: Chinese course-paper structure with section-level writing points, figure list, and table list.
 - `paper/result_analysis_notes.md`: current BUSI/CVC result interpretation, instability analysis, and recommended supplemental experiments.
 - `paper/supplemental_experiments.md`: exact commands for BUSI seed-6142 stability checks and CVC continued-training checks.
