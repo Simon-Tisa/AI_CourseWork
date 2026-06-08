@@ -101,6 +101,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\s
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\summarize_results.py
 ```
 
+Build the Chinese course-paper draft, Word document, and self-drawn paper figures:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\build_course_paper.py
+```
+
 ## Project Structure
 
 ```text
@@ -121,6 +127,10 @@ Current paper-preparation files:
 - `paper/draft_outline.md`: Chinese course-paper structure with section-level writing points, figure list, and table list.
 - `paper/result_analysis_notes.md`: current BUSI/CVC result interpretation, instability analysis, and recommended supplemental experiments.
 - `paper/supplemental_experiments.md`: exact commands for BUSI seed-6142 stability checks and CVC continued-training checks.
+- `paper/course_paper_draft.md`: complete Chinese course-paper draft in Markdown.
+- `paper/基于U-KAN的医学图像分割算法复现与注意力增强改进研究.docx`: Word version of the final course paper draft.
+- `paper/figures/`: self-drawn KAN/U-KAN/attention/workflow diagrams and the runtime screenshot collage.
+- `paper/fig-PPT手绘.pdf`: original hand-drawn source sketch copied into paper materials.
 - `paper/tables/segmentation_results.csv`: aggregated quantitative segmentation results.
 - `paper/tables/training_diagnostics.csv`: best epoch, final epoch, max jump, and last-10-epoch convergence diagnostics.
 - `paper/tables/busi_seed_stability.csv`: BUSI seed-2981/6142 stability comparison for no-KAN and U-KAN.
