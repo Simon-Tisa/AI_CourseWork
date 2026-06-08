@@ -107,6 +107,12 @@ Build the Chinese course-paper draft, Word document, and self-drawn paper figure
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\build_course_paper.py
 ```
 
+Build the rewritten paper version with richer literature comparison, experiment-diagnosis discussion, supplemental experiments, and additional figures:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\build_course_paper_v2.py
+```
+
 ## Project Structure
 
 ```text
@@ -128,8 +134,10 @@ Current paper-preparation files:
 - `paper/result_analysis_notes.md`: current BUSI/CVC result interpretation, instability analysis, and recommended supplemental experiments.
 - `paper/supplemental_experiments.md`: exact commands for BUSI seed-6142 stability checks and CVC continued-training checks.
 - `paper/course_paper_draft.md`: complete Chinese course-paper draft in Markdown.
+- `paper/course_paper_draft_v2.md`: rewritten Chinese course-paper draft that emphasizes literature-style experiment organization, instability diagnosis, supplemental verification, and scoring-point coverage.
 - `paper/基于U-KAN的医学图像分割算法复现与注意力增强改进研究.docx`: Word version of the final course paper draft.
-- `paper/figures/`: self-drawn KAN/U-KAN/attention/workflow diagrams and the runtime screenshot collage.
+- `paper/基于U-KAN的医学图像分割算法复现、实验诊断与注意力增强研究_重写版.docx`: Word version of the rewritten course paper.
+- `paper/figures/`: self-drawn KAN/U-KAN/attention/workflow diagrams, dataset examples, training curves, prediction comparisons, diagnosis flowcharts, supplemental-experiment charts, error-case analysis, and runtime screenshots.
 - `paper/fig-PPT手绘.pdf`: original hand-drawn source sketch copied into paper materials.
 - `paper/tables/segmentation_results.csv`: aggregated quantitative segmentation results.
 - `paper/tables/training_diagnostics.csv`: best epoch, final epoch, max jump, and last-10-epoch convergence diagnostics.
