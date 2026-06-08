@@ -15,6 +15,14 @@
 | CVC | U-KAN | 0.7874 | 0.8810 | 0.9140 | 0.8503 | 0.9916 | 6.36M | 45.90 |
 | CVC | Attention-U-KAN | 0.7631 | 0.8656 | 0.9207 | 0.8168 | 0.9926 | 6.36M | 44.02 |
 
+补实验结果：
+
+| 实验 | 模型/设置 | IoU | Dice | 结论 |
+| --- | --- | ---: | ---: | --- |
+| BUSI seed6142 | U-KAN(no-KAN) | 0.5942 | 0.7454 | 作为随机种子稳定性对照 |
+| BUSI seed6142 | U-KAN | 0.6157 | 0.7621 | 仍高于 no-KAN |
+| CVC U-KAN ft50 | 从原 best checkpoint 低学习率继续训练 50 epoch | 0.7847 | 0.8794 | 未超过原 100 epoch U-KAN |
+
 ## 2. 可写入论文的主要观察
 
 ### 2.1 U-KAN 相对 no-KAN 的收益
@@ -32,6 +40,14 @@
 - Recall 从 0.8378 提升到 0.8503。
 
 这说明在相同 U-KAN 主体框架中，将 MLP 替换为 KANLinear 后，模型对病灶区域的召回能力和整体重叠指标均有提升。论文中应重点强调 no-KAN 与 U-KAN 的对比最能说明 KAN 模块本身的作用，因为两者结构差异最小。
+
+补充 seed 6142 后，BUSI 上 U-KAN 仍然高于 no-KAN：
+
+- seed 6142 中 U-KAN IoU 为 0.6157，no-KAN 为 0.5942，提升 0.0215；
+- 两个 seed 平均后，U-KAN IoU 为 0.6515，no-KAN 为 0.6214，平均提升 0.0301；
+- 两个 seed 平均 Dice 分别为 0.7884 和 0.7661，平均提升 0.0223。
+
+这说明 KAN 模块的收益不是 seed 2981 的单次偶然现象；但 seed 6142 的绝对指标整体低于 seed 2981，也证明随机划分和初始化对 BUSI 结果有明显影响。论文中建议把这部分写成“随机种子稳定性补充实验”，而不是写成严格三 seed 平均，因为当前只补了两个 seed。
 
 ### 2.2 U-KAN 相对 U-Net 的收益与代价
 
@@ -82,6 +98,8 @@ CVC 训练诊断表显示：
 
 > CVC 的 U-Net 和 Attention-U-KAN best epoch 靠近训练末端，可能仍有继续训练空间；U-KAN 和 no-KAN 的后段变化较小，更接近平台期。为稳妥起见，本文对主复现模型 U-KAN 进行继续训练补实验，以判断 100 epoch 是否足够。
 
+继续训练实验已经完成：从 `cvc_ukan_seed2981` 的 best checkpoint 出发，降低学习率继续训练 50 epoch 后，最终 `evaluate.py` IoU 为 0.7847，略低于原始 100 epoch U-KAN 的 0.7874。这个结果说明，对于当前 U-KAN 设置，100 epoch 已经基本足够；CVC 官方结果更高的差距更可能来自更长从头训练、不同数据划分、官方 checkpoint 或更多 seed 设置，而不是简单继续训练即可弥补。
+
 ## 4. 与 U-KAN 官方结果的关系
 
 官方 README 中的 Seg U-KAN 单 run checkpoint 表显示：
@@ -103,11 +121,13 @@ CVC 训练诊断表显示：
 
 > 本文实验并非直接复用官方 checkpoint，而是在本地环境中重构训练流程并从头训练。BUSI 结果达到并超过官方单 run 参考值；CVC 结果低于官方参考，可能与训练轮数和数据划分有关，因此本文加入继续训练实验作为补充分析。
 
-## 5. 推荐补实验
+## 5. 补实验结论
 
 ### 5.1 BUSI seed 6142 稳定性实验
 
 目标：验证 U-KAN 相对 no-KAN 的收益是否稳定，而不是 seed 2981 的偶然结果。
+
+结论：已完成。U-KAN 在 seed 6142 上仍高于 no-KAN，但两个模型绝对指标均明显低于 seed 2981。论文中应报告两 seed 表格，并说明随机种子/划分对 BUSI 有影响。
 
 命令：
 
@@ -121,6 +141,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\s
 ### 5.2 CVC U-KAN 继续训练
 
 目标：验证 CVC 100 epoch 是否不足。
+
+结论：已完成。继续训练 50 epoch 的最佳评估 IoU 为 0.7847，低于原 100 epoch 的 0.7874。因此当前证据不支持“U-KAN 只是因为没跑够才低于官方 CVC 参考值”，更合理的解释是训练设置、数据划分、epoch 数、官方 checkpoint 和多 seed 平均均可能造成差异。
 
 命令：
 

@@ -1,4 +1,4 @@
-# 补充实验计划
+# 补充实验记录
 
 ## 发现的问题
 
@@ -48,7 +48,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\s
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\evaluate.py --name busi_ukan_seed6142
 ```
 
-论文使用方式：若 seed 6142 下 U-KAN 仍高于 no-KAN，则可说明 KAN 模块收益更稳定；若两者接近或反转，则应以“单 seed 结果存在波动，后续需多 seed 平均”为讨论点。
+结果：
+
+| 模型 | seed 2981 IoU | seed 2981 Dice | seed 6142 IoU | seed 6142 Dice | 两 seed 平均 IoU | 两 seed 平均 Dice |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| U-KAN(no-KAN) | 0.6486 | 0.7869 | 0.5942 | 0.7454 | 0.6214 | 0.7661 |
+| U-KAN | 0.6874 | 0.8147 | 0.6157 | 0.7621 | 0.6515 | 0.7884 |
+
+论文使用方式：seed 6142 下 U-KAN 仍高于 no-KAN，两个 seed 平均后 U-KAN 也保持优势，说明 KAN 模块收益不是单一 seed 偶然现象。但 seed 6142 的绝对指标整体下降，说明 BUSI 结果对随机划分和初始化较敏感，论文应保留稳定性讨论。
 
 ## 补实验 B：CVC 继续训练
 
@@ -61,4 +68,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\s
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_python.ps1 .\scripts\evaluate.py --name cvc_ukan_seed2981_ft50
 ```
 
-论文使用方式：如果继续训练显著提升，则说明 CVC 原实验可能训练不足；如果提升有限，则说明 100 epoch 已基本达到平台期。
+结果：
+
+| 实验 | 设置 | epoch | best epoch | IoU | Dice | 后 10 epoch IoU 变化 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| cvc_ukan_seed2981 | 从头训练 | 100 | 86 | 0.7874 | 0.8810 | 0.0006 |
+| cvc_ukan_seed2981_ft50 | 从 best checkpoint 继续训练 | 50 | 48 | 0.7847 | 0.8794 | 0.0063 |
+
+论文使用方式：继续训练没有超过原始 100 epoch U-KAN，说明当前 U-KAN 在 CVC 上基本已经达到平台期。CVC 结果低于官方参考值时，不应简单归因于“没跑够”，更合理的解释包括数据划分、预处理版本、官方 checkpoint、训练总轮数和多 seed 平均差异。

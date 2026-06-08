@@ -123,6 +123,8 @@ Current paper-preparation files:
 - `paper/supplemental_experiments.md`: exact commands for BUSI seed-6142 stability checks and CVC continued-training checks.
 - `paper/tables/segmentation_results.csv`: aggregated quantitative segmentation results.
 - `paper/tables/training_diagnostics.csv`: best epoch, final epoch, max jump, and last-10-epoch convergence diagnostics.
+- `paper/tables/busi_seed_stability.csv`: BUSI seed-2981/6142 stability comparison for no-KAN and U-KAN.
+- `paper/tables/cvc_continued_training.csv`: CVC U-KAN 100-epoch vs continued-training comparison.
 
 ## Source Attribution
 

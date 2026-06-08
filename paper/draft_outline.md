@@ -255,4 +255,5 @@
 | 表 4 | BUSI 结果 | `segmentation_results.csv` |
 | 表 5 | CVC 结果 | `segmentation_results.csv` |
 | 表 6 | 训练稳定性诊断 | `training_diagnostics.csv` |
-| 表 7 | 补实验结果 | 待 seed 6142 / ft50 运行后补充 |
+| 表 7 | BUSI seed 稳定性补实验 | `busi_seed_stability.csv` |
+| 表 8 | CVC 继续训练补实验 | `cvc_continued_training.csv` |

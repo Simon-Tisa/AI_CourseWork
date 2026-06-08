@@ -54,8 +54,8 @@
 | E6 | CVC | U-KAN(no-KAN) | 补充 KAN 消融 | 已完成 |
 | E7 | CVC | U-KAN | 跨数据集复现 | 已完成 |
 | E8 | CVC | Attention-U-KAN | 跨数据集改进验证 | 已完成 |
-| E9 | BUSI | no-KAN / U-KAN seed 6142 | 随机种子稳定性补实验 | 配置已准备，待运行 |
-| E10 | CVC | U-KAN 继续训练 | 收敛性补实验 | 训练脚本已支持，待运行 |
+| E9 | BUSI | no-KAN / U-KAN seed 6142 | 随机种子稳定性补实验 | 已完成 |
+| E10 | CVC | U-KAN 继续训练 | 收敛性补实验 | 已完成 |
 
 ## 已生成资产
 
@@ -83,6 +83,8 @@
 
 - `paper/tables/segmentation_results.csv`
 - `paper/tables/training_diagnostics.csv`
+- `paper/tables/busi_seed_stability.csv`
+- `paper/tables/cvc_continued_training.csv`
 
 ## 当前主要结论
 
@@ -90,21 +92,19 @@
 2. CVC 上 U-KAN 的 IoU/Dice 为 0.7874/0.8810，也略优于 U-Net 和 no-KAN。
 3. Attention-U-KAN 在 BUSI 和 CVC 上均未超过原始 U-KAN，说明简单通道-空间注意力并非稳定增益，应作为改进尝试和局限讨论，而不是强行包装成全面提升。
 4. U-Net 推理速度显著快于 U-KAN 系列，KAN 提升精度的同时带来更高推理时间，这可以写入效率分析。
-5. BUSI no-KAN 在训练曲线中存在局部峰值，需要用 seed 6142 补实验验证单 seed 结果的稳定性。
-6. CVC U-Net best epoch 位于第 99 轮，后段仍在上升；U-KAN 后 10 轮变化很小，更接近平台期。可通过 CVC U-KAN 继续训练补充收敛性证据。
+5. BUSI no-KAN 在 seed 2981 中存在局部峰值；seed 6142 补实验显示 U-KAN 仍高于 no-KAN，但整体指标下降，说明 KAN 收益较稳定，而 BUSI 绝对性能受随机划分影响明显。
+6. CVC U-KAN 继续训练 50 epoch 未超过原 100 epoch best checkpoint，说明当前 U-KAN 设置基本达到平台期；CVC 与官方参考结果的差距不宜简单归因于未继续训练。
 
 ## 当前缺口
 
 1. GitHub 远端尚需用户本机执行 `git push origin course-paper-ukan`。
-2. seed 6142 和 CVC 继续训练补实验尚未运行。
-3. 论文正文尚未完成，包括摘要、引言、算法原理、实验设计、结果分析、讨论、结论和参考文献。
-4. 自绘图尚未完成，包括 U-KAN 结构图、Attention-U-KAN 模块图、实验流程图、数据处理流程图。
-5. 课程论文最终 Word 排版尚未完成，需要按课程要求设置小四号、1.5 倍行距、图表编号和来源标注。
+2. 论文正文尚未完成，包括摘要、引言、算法原理、实验设计、结果分析、讨论、结论和参考文献。
+3. 自绘图尚未完成，包括 U-KAN 结构图、Attention-U-KAN 模块图、实验流程图、数据处理流程图。
+4. 课程论文最终 Word 排版尚未完成，需要按课程要求设置小四号、1.5 倍行距、图表编号和来源标注。
 
 ## 下一步优先级
 
-1. 等用户运行 BUSI seed 6142 的 no-KAN 和 U-KAN 补实验，确认随机种子稳定性。
-2. 等用户运行 CVC U-KAN 继续训练 50 epoch，确认是否训练不足。
-3. 在补实验等待期间，先撰写不依赖新增结果的论文部分：课程论文来源说明、引言、算法原理、数据与实验设置。
-4. 整理参考文献和图源说明。
-5. 生成自绘图并开始 Word 论文排版。
+1. 基于已完成的 11 行结果表和两张补实验表，撰写“实验结果与分析”和“讨论”章节。
+2. 撰写不依赖新增实验的正文部分：课程论文来源说明、引言、算法原理、数据与实验设置。
+3. 整理参考文献和图源说明。
+4. 生成自绘图并开始 Word 论文排版。

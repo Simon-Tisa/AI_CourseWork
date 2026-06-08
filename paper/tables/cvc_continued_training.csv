@@ -1,0 +1,3 @@
+name,setting,epochs,best_epoch,iou,dice,last10_val_iou_delta,delta_iou_vs_original
+cvc_ukan_seed2981,from_scratch,100,86,0.7874,0.8810,0.0006,0.0000
+cvc_ukan_seed2981_ft50,resume_best_ft50,50,48,0.7847,0.8794,0.0063,-0.0027
