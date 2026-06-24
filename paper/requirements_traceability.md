@@ -1,6 +1,6 @@
 # 课程论文要求与项目完成度最终追踪
 
-最后复核日期：2026-06-08
+最后复核日期：2026-06-22
 
 ## 选题定位
 
@@ -16,11 +16,11 @@
 
 | 交付物 | 文件/位置 | 状态 |
 | --- | --- | --- |
-| Word 课程论文 | `paper/基于U-KAN的医学图像分割算法复现、实验诊断与注意力增强研究_重写版.docx` | 已完成 |
+| Word 课程论文 | `../论文撰写/基于 U-KAN 的医学图像分割算法复现、实验诊断与注意力增强研究.docx` | 已完成 |
 | Markdown 正文源稿 | `paper/course_paper_draft_v2.md` | 已完成 |
-| 论文生成脚本 | `scripts/build_course_paper_v2.py` | 已完成，可重新生成 Word 和图表 |
+| 论文生成脚本 | `scripts/build_final_course_paper.py` | 已完成，可重新生成 Word |
 | 主实验与补实验表格 | `paper/tables/*.csv` | 已完成 |
-| 论文图片 | `paper/figures/` 与 `experiments/figures/` | 已完成 |
+| 论文图片 | `matlab_figures/output/`、`paper/reference_figures/` 与 `paper/figures/` | 已完成 |
 | 工程代码 | `src/`, `scripts/`, `configs/`, `tests/` | 已完成 |
 | README | `README.md` | 已完成，包含环境、数据、训练、评估、绘图和论文生成命令 |
 | Git 提交 | `b023484 docs: rewrite course paper with experiment diagnosis` | 已完成 |
@@ -36,7 +36,7 @@
 | 实验平台 | 论文表 3 记录 Python、PyTorch、CUDA、RTX 4080 Laptop GPU 等环境 | 已完成 |
 | 训练过程 | 训练日志、训练曲线、`实验记录.docx`、`experiments/figures/*training_curves.png` | 已完成 |
 | 实验结果展示与分析 | 论文第 5-7 章包含主实验、消融、补实验、效率和错误案例分析 | 已完成 |
-| 正文字数不少于 2000 字 | DOCX 结构检查显示中文字符规模约 3714，超过要求 | 已完成 |
+| 正文字数不少于 2000 字 | 参考文献前中文字符约 16778，显著超过要求 | 已完成 |
 | 正文字体小四、1.5 倍行距 | DOCX Normal 样式为 12pt；正文段落 1.5 倍行距 | 已完成 |
 | 课程论文来源说明 | 正文开头“来源说明与过程声明”说明论文、源码、数据集、LLM 辅助和图源 | 已完成 |
 | 每张图片注明来源 | 图 1-图 14 均在图注中写明作者自绘、论文/官方项目来源或本项目生成 | 已完成 |
@@ -62,7 +62,7 @@
 | 详细 README | 说明依赖、环境、数据准备、运行步骤、项目结构 | `README.md` 已覆盖环境诊断、数据处理、训练、评估、绘图、论文生成和项目结构 |
 | 项目结构 | 模块划分清晰、代码可读、可维护 | `configs/`, `scripts/`, `src/`, `tests/`, `experiments/`, `paper/` 分层组织 |
 | 自构/整理数据集 | 可用公开数据集并进一步整理清洗 | BUSI 多 mask 并集合并；CVC 标准化；固定 split；生成数据统计和样本图 |
-| 论文格式排版 | 标题层次、图表编号、来源、参考文献、页面美观 | Word 使用真实 Heading 样式、正文小四 1.5 倍行距、11 张表、14 张图 |
+| 论文格式排版 | 标题层次、图表编号、来源、参考文献、页面美观 | Word 使用真实 Heading 样式、正文小四 1.5 倍行距、20 张表、24 张图 |
 | 自绘图片 | PowerPoint/Visio/AI 等自绘可酌情加分 | 使用作者 PPT 手绘图，另自绘 KAN/Attention/实验流程/诊断流程/补实验图 |
 | 过程记录与独立思考 | 高分建议体现额外实践和思考过程 | 第 6 章完整写出 BUSI no-KAN 跳变疑问、seed 6142 验证、CVC 继续训练验证 |
 
@@ -95,10 +95,12 @@
 
 | 检查项 | 结果 |
 | --- | --- |
-| `scripts/build_course_paper_v2.py` 重新生成论文 | 通过 |
-| Python 编译检查 | `python -m py_compile scripts/build_course_paper_v2.py` 通过 |
-| DOCX 结构解析 | 108 段、11 表、14 图、16 个 Heading |
-| 正文规模 | 中文字符规模约 3714，满足不少于 2000 字 |
+| `scripts/build_final_course_paper.py` 重新生成论文 | 通过 |
+| Python 编译检查 | `build_final_course_paper.py`、`qa_final_docx.py`、`audit_citations.py` 通过 |
+| DOCX 结构解析 | 287 段、20 表、24 图、58 个 Heading |
+| 正文规模 | 参考文献前中文字符约 16778，满足不少于 2000 字 |
+| 参考文献闭环 | `[1]-[18]` 全部在正文引用，无缺失或未引用条目 |
+| 数据完整性 | 11 个 run、1546 张预测审计通过，最大差异 `2.78e-6` |
 | 正文格式 | Normal 样式 12pt，正文段落 1.5 倍行距 |
 | 新增关键图片视觉抽查 | 实验流程图、诊断流程图、补实验图、错误案例图均已打开检查 |
 | 页面级渲染 | 受本机缺少 DOCX 转 PDF/PNG 外部转换程序限制，`render_docx.py` 报 WinError 2 |

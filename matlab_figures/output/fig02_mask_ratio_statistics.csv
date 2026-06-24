@@ -1,0 +1,3 @@
+dataset,sample_count,mean_mask_ratio,median_mask_ratio
+BUSI,780,0.0782656678353302,0.0419131189878791
+CVC-ClinicDB,612,0.0930012666235476,0.0683367693865741

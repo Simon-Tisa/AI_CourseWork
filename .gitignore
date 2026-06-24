@@ -11,3 +11,5 @@ experiments/results/**/log.csv
 experiments/results/**/model.pth
 experiments/results/**/events.out.tfevents*
 experiments/results/**/predictions/
+
+paper/source_figure_pages/
