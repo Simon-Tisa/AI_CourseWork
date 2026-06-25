@@ -1,7 +1,0 @@
-DATA INTEGRITY AUDIT: PASS
-Runs checked: 11
-Total validation predictions checked: 1546
-Maximum metric difference vs summary: 2.7804184669077969e-06
-Maximum summary vs per-run metrics.csv difference: 0
-BUSI differences below 5e-6 are caused by MATLAB/OpenCV nearest-neighbor boundary indexing; all four-decimal reported values agree.
-Mask statistics, supplemental tables and training logs: PASS

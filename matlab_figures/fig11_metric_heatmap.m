@@ -13,7 +13,7 @@ runNames = {
 };
 datasetLabels = ["BUSI", "CVC-ClinicDB"];
 
-fig = new_paper_figure(1650, 720);
+fig = new_result_figure(1650, 720);
 layout = tiledlayout(fig, 1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, '主实验完整评价指标热力图', ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -62,5 +62,5 @@ for datasetIndex = 1:2
     end
 end
 
-export_paper_figure(fig, "fig11_metric_heatmap_matlab");
+export_result_figure(fig, "fig11_metric_heatmap_matlab");
 end

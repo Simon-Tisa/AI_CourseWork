@@ -1,5 +1,5 @@
-function fig = new_paper_figure(width, height)
-%NEW_PAPER_FIGURE Create a consistently styled white paper figure.
+function fig = new_result_figure(width, height)
+%NEW_RESULT_FIGURE Create a consistently styled white result figure.
 
 if nargin < 1
     width = 1600;

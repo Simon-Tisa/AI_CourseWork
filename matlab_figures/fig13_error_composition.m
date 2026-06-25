@@ -16,7 +16,7 @@ globalValues = [
     global_error_ratios(cvc, modelLabels(2))
 ];
 
-fig = new_paper_figure(1700, 680);
+fig = new_result_figure(1700, 680);
 layout = tiledlayout(fig, 1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, '失败分析：过分割与漏分割误差构成', ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -63,7 +63,7 @@ errorTable = table(groupLabels', globalValues(:, 1), globalValues(:, 2), ...
     'VariableNames', {'group', 'fp_over_gt', 'fn_over_gt'});
 writetable(errorTable, fullfile(paths.output, 'fig13_global_error_composition.csv'));
 
-export_paper_figure(fig, "fig13_error_composition_matlab");
+export_result_figure(fig, "fig13_error_composition_matlab");
 end
 
 function ratios = global_error_ratios(metrics, modelLabel)

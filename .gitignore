@@ -12,4 +12,13 @@ experiments/results/**/model.pth
 experiments/results/**/events.out.tfevents*
 experiments/results/**/predictions/
 
-paper/source_figure_pages/
+paper/
+matlab_figures/output/
+matlab_figures/DATA_AUDIT_REPORT.md
+matlab_figures/FIGURE_MANIFEST.md
+scripts/build_*.py
+scripts/analyze_*format.py
+scripts/qa_*.py
+scripts/*citation*.py
+scripts/extract_reference_*.py
+scripts/revise_*.py

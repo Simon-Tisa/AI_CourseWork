@@ -18,7 +18,7 @@ for datasetIndex = 1:2
     ratios{datasetIndex} = values;
 end
 
-fig = new_paper_figure(1500, 650);
+fig = new_result_figure(1500, 650);
 layout = tiledlayout(fig, 1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, '全数据集病灶 mask 前景占比分布', 'FontSize', 18, 'FontWeight', 'bold');
 
@@ -56,5 +56,5 @@ statistics = table(displayNames', ...
     'VariableNames', {'dataset', 'sample_count', 'mean_mask_ratio', 'median_mask_ratio'});
 writetable(statistics, fullfile(paths.output, 'fig02_mask_ratio_statistics.csv'));
 
-export_paper_figure(fig, "fig02_mask_ratio_distribution_matlab");
+export_result_figure(fig, "fig02_mask_ratio_distribution_matlab");
 end

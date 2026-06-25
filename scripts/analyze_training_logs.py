@@ -8,7 +8,7 @@ from pathlib import Path
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Analyze training curves for convergence and stability.")
     parser.add_argument("--results-dir", default="experiments/results")
-    parser.add_argument("--out", default="paper/tables/training_diagnostics.csv")
+    parser.add_argument("--out", default="experiments/tables/training_diagnostics.csv")
     return parser.parse_args()
 
 

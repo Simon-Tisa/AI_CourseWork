@@ -53,7 +53,7 @@ for datasetIndex = 1:2
     end
 end
 
-fig = new_paper_figure(1700, 1450);
+fig = new_result_figure(1700, 1450);
 layout = tiledlayout(fig, 4, 4, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, 'U-KAN 典型困难样本与误差区域', ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -102,5 +102,5 @@ annotation(fig, 'textbox', [0.15, 0.005, 0.7, 0.03], ...
     'String', '误差叠加：绿色=正确前景，红色=过分割，蓝色=漏分割', ...
     'EdgeColor', 'none', 'HorizontalAlignment', 'center', 'FontSize', 10);
 
-export_paper_figure(fig, "fig08_error_cases_matlab");
+export_result_figure(fig, "fig08_error_cases_matlab");
 end

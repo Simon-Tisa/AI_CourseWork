@@ -7,7 +7,7 @@ results = readtable(fullfile(paths.tables, 'segmentation_results.csv'), ...
 busi = results(results.name == "busi_ukan_seed2981", :);
 cvc = results(results.name == "cvc_ukan_seed2981", :);
 
-fig = new_paper_figure(1900, 1050);
+fig = new_result_figure(1900, 1050);
 ax = axes(fig, 'Position', [0.02, 0.03, 0.96, 0.92]);
 axis(ax, [0, 1, 0, 1]);
 axis(ax, 'off');
@@ -42,7 +42,7 @@ evidence = [
     sprintf("config.yml | log.csv | model.pth\n100 epoch，best checkpoint 按 val IoU 保存")
     sprintf("BUSI U-KAN: IoU %.4f, Dice %.4f\nCVC U-KAN: IoU %.4f, Dice %.4f", ...
         busi.iou, busi.dice, cvc.iou, cvc.dice)
-    sprintf("paper/tables/segmentation_results.csv\n训练曲线、预测 mask、MATLAB 图表与论文表格")
+    sprintf("experiments/tables/segmentation_results.csv\n训练曲线、预测 mask 与 MATLAB 图表")
 ];
 
 rowY = [0.65, 0.47, 0.29, 0.11];
@@ -74,5 +74,5 @@ annotation(fig, 'textbox', [0.18, 0.005, 0.64, 0.035], ...
     'EdgeColor', 'none', 'HorizontalAlignment', 'center', ...
     'FontSize', 10, 'Color', [0.30, 0.34, 0.38]);
 
-export_paper_figure(fig, "fig14_runtime_evidence_matlab");
+export_result_figure(fig, "fig14_runtime_evidence_matlab");
 end

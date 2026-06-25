@@ -7,7 +7,7 @@ seedData = readtable(fullfile(paths.tables, 'busi_seed_stability.csv'), ...
 continueData = readtable(fullfile(paths.tables, 'cvc_continued_training.csv'), ...
     'TextType', 'string');
 
-fig = new_paper_figure(1800, 650);
+fig = new_result_figure(1800, 650);
 layout = tiledlayout(fig, 1, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, '补充实验：随机种子稳定性与继续训练诊断', ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -51,7 +51,7 @@ xtickangle(ax3, 12);
 legend(ax3, {'IoU', 'Dice'}, 'Location', 'southoutside', 'Orientation', 'horizontal');
 add_bar_labels(ax3, bars, 4);
 
-export_paper_figure(fig, "fig09_supplemental_experiments_matlab");
+export_result_figure(fig, "fig09_supplemental_experiments_matlab");
 end
 
 function style_bars(bars, colors)

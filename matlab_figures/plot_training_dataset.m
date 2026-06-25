@@ -20,7 +20,7 @@ for index = 1:4
     logs{index} = readtable(fullfile(paths.results, runNames(index), 'log.csv'));
 end
 
-fig = new_paper_figure(1800, 620);
+fig = new_result_figure(1800, 620);
 layout = tiledlayout(fig, 1, 3, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, datasetLabel + " 四模型训练过程", ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -60,5 +60,5 @@ for panelIndex = 1:3
 end
 legend(ax, modelLabels, 'Orientation', 'horizontal', 'Location', 'southoutside');
 
-export_paper_figure(fig, outputBaseName);
+export_result_figure(fig, outputBaseName);
 end

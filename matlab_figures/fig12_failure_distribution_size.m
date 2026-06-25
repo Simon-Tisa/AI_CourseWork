@@ -13,7 +13,7 @@ cvc = collect_per_image_metrics("cvc", cvcRuns, modelLabels);
 writetable(busi, fullfile(paths.output, 'busi_per_image_metrics.csv'));
 writetable(cvc, fullfile(paths.output, 'cvc_per_image_metrics.csv'));
 
-fig = new_paper_figure(1800, 1200);
+fig = new_result_figure(1800, 1200);
 layout = tiledlayout(fig, 2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, '失败分析：逐图性能分布与病灶面积分层', ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -23,7 +23,7 @@ plot_box_panel(nexttile, cvc, modelLabels, 'CVC-ClinicDB：逐图 Dice 分布');
 plot_size_panel(nexttile, busi, modelLabels, 'BUSI：不同病灶面积的平均 Dice');
 plot_size_panel(nexttile, cvc, modelLabels, 'CVC-ClinicDB：不同病灶面积的平均 Dice');
 
-export_paper_figure(fig, "fig12_failure_distribution_size_matlab");
+export_result_figure(fig, "fig12_failure_distribution_size_matlab");
 end
 
 function plot_box_panel(ax, metrics, modelLabels, panelTitle)

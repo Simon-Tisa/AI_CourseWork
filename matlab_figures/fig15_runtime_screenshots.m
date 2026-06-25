@@ -1,5 +1,5 @@
 function fig15_runtime_screenshots()
-%FIG15_RUNTIME_SCREENSHOTS Arrange real terminal captures for the paper.
+%FIG15_RUNTIME_SCREENSHOTS Arrange real terminal captures as runtime evidence.
 
 paths = project_paths();
 workspace = fileparts(paths.root);
@@ -13,7 +13,7 @@ evaluation = imread(fullfile(screenshotDir, 'mess', '生成 metrics.csv 和预�
 busi = busi(max(1, round(size(busi, 1) * 0.35)):end, :, :);
 cvc = cvc(max(1, round(size(cvc, 1) * 0.35)):end, :, :);
 
-fig = new_paper_figure(1900, 1200);
+fig = new_result_figure(1900, 1200);
 layout = tiledlayout(fig, 2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 layout.OuterPosition = [0.01, 0.04, 0.98, 0.90];
 annotation(fig, 'textbox', [0.15, 0.945, 0.70, 0.045], ...
@@ -33,7 +33,7 @@ annotation(fig, 'textbox', [0.12, 0.002, 0.76, 0.03], ...
     'EdgeColor', 'none', 'HorizontalAlignment', 'center', ...
     'FontSize', 10, 'Color', [0.30, 0.34, 0.38]);
 
-export_paper_figure(fig, "fig15_runtime_screenshots_matlab");
+export_result_figure(fig, "fig15_runtime_screenshots_matlab");
 end
 
 

@@ -1,5 +1,5 @@
-function export_paper_figure(fig, baseName)
-%EXPORT_PAPER_FIGURE Export a figure as 300 DPI PNG and vector PDF.
+function export_result_figure(fig, baseName)
+%EXPORT_RESULT_FIGURE Export a figure as 300 DPI PNG and vector PDF.
 
 paths = project_paths();
 pngPath = fullfile(paths.output, baseName + ".png");

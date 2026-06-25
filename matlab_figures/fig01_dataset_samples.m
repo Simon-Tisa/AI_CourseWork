@@ -24,7 +24,7 @@ for datasetIndex = 1:2
     end
 end
 
-fig = new_paper_figure(1750, 900);
+fig = new_result_figure(1750, 900);
 layout = tiledlayout(fig, 2, 4, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, 'BUSI 与 CVC-ClinicDB 代表性样本及专家轮廓', ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -57,5 +57,5 @@ audit = table( ...
     'VariableNames', {'dataset', 'sample_id', 'mask_ratio'});
 writetable(audit, fullfile(paths.output, 'fig01_selected_samples.csv'));
 
-export_paper_figure(fig, "fig01_dataset_samples_matlab");
+export_result_figure(fig, "fig01_dataset_samples_matlab");
 end

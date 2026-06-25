@@ -13,7 +13,7 @@ runNames = {
 datasetLabels = ["BUSI", "CVC-ClinicDB"];
 colors = lines(4);
 
-fig = new_paper_figure(1500, 680);
+fig = new_result_figure(1500, 680);
 layout = tiledlayout(fig, 1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, '模型精度—效率—参数量权衡', ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -53,5 +53,5 @@ for datasetIndex = 1:2
     title(ax, datasetLabels(datasetIndex));
 end
 
-export_paper_figure(fig, "fig10_efficiency_tradeoff_matlab");
+export_result_figure(fig, "fig10_efficiency_tradeoff_matlab");
 end

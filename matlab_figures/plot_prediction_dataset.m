@@ -18,7 +18,7 @@ end
 ids = read_id_list(fullfile(paths.splits, splitFile));
 ids = ids(1:4);
 
-fig = new_paper_figure(1850, 1450);
+fig = new_result_figure(1850, 1450);
 layout = tiledlayout(fig, 4, 5, 'TileSpacing', 'compact', 'Padding', 'compact');
 sgtitle(layout, datasetLabel + " 验证集预测结果对比", ...
     'FontSize', 18, 'FontWeight', 'bold');
@@ -53,5 +53,5 @@ annotation(fig, 'textbox', [0.15, 0.005, 0.7, 0.03], ...
     'String', '误差图：绿色=正确前景，红色=过分割，蓝色=漏分割', ...
     'EdgeColor', 'none', 'HorizontalAlignment', 'center', 'FontSize', 10);
 
-export_paper_figure(fig, outputBaseName);
+export_result_figure(fig, outputBaseName);
 end

@@ -8,7 +8,7 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY_PATH = ROOT / "paper" / "tables" / "segmentation_results.csv"
+SUMMARY_PATH = ROOT / "experiments" / "tables" / "segmentation_results.csv"
 OUTPUT_PATH = ROOT / "matlab_figures" / "output" / "opencv_prediction_audit.csv"
 
 

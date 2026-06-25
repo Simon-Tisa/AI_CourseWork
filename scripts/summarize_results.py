@@ -6,9 +6,9 @@ from pathlib import Path
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Summarize experiment metrics into a paper table.")
+    parser = argparse.ArgumentParser(description="Summarize experiment metrics into a CSV table.")
     parser.add_argument("--results-dir", default="experiments/results")
-    parser.add_argument("--out", default="paper/tables/segmentation_results.csv")
+    parser.add_argument("--out", default="experiments/tables/segmentation_results.csv")
     return parser.parse_args()
 
 
