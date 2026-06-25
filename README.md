@@ -5,16 +5,17 @@ This repository reproduces Segmentation U-KAN for 2D medical image segmentation 
 ## Repository
 
 ```text
-Repository: https://github.com/Simon-Tisa/AI_CourseWork.git
-Project path: branch root
+Repository: https://github.com/Simon-Tisa/AI_CourseWork/tree/course-paper-ukan
+Project path: course-paper-ukan branch root
 Branch: course-paper-ukan
 ```
 
 Clone and enter the project folder:
 
 ```powershell
-git clone -b course-paper-ukan --single-branch https://github.com/Simon-Tisa/AI_CourseWork.git
+git clone https://github.com/Simon-Tisa/AI_CourseWork.git
 cd AI_CourseWork
+git checkout course-paper-ukan
 ```
 
 ## Environment
@@ -62,7 +63,16 @@ tensorboardX
 
 ## Data
 
-Place raw public datasets under `data/raw`. Processing scripts create standardized datasets under `data/processed`.
+Raw datasets are not committed to this repository. Download the public datasets manually and place them under `data/raw`. Processing scripts create standardized datasets under `data/processed`.
+
+Recommended download pages:
+
+```text
+BUSI: https://www.kaggle.com/datasets/aryashah2k/breast-ultrasound-images-dataset
+CVC-ClinicDB: https://www.kaggle.com/datasets/balraj98/cvcclinicdb
+```
+
+After downloading and unzipping, organize the raw files as follows. The BUSI folder should contain `Dataset_BUSI_with_GT`, and the CVC folder should contain the `PNG/Original` and `PNG/Ground Truth` subfolders.
 
 Expected local layout:
 
