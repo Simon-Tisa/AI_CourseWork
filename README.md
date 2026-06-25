@@ -6,16 +6,15 @@ This repository reproduces Segmentation U-KAN for 2D medical image segmentation 
 
 ```text
 Repository: https://github.com/Simon-Tisa/AI_CourseWork.git
-Project path: ukan-course-paper/
+Project path: branch root
 Branch: course-paper-ukan
 ```
 
 Clone and enter the project folder:
 
 ```powershell
-git clone https://github.com/Simon-Tisa/AI_CourseWork.git
-cd AI_CourseWork\ukan-course-paper
-git checkout course-paper-ukan
+git clone -b course-paper-ukan --single-branch https://github.com/Simon-Tisa/AI_CourseWork.git
+cd AI_CourseWork
 ```
 
 ## Environment
